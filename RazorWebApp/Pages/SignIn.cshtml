@@ -1,0 +1,147 @@
+@page
+@model RazorWebApp.Pages.SignInModel
+@{
+    ViewData["Title"] = "Sign In";
+    Layout = "Shared/_LayoutSignIn.cshtml";
+}
+@Html.AntiForgeryToken()
+    <div class="signin-signup-wrapper">
+    <div class="signin-signup-col1">
+      <div class="signin-signup-box">
+        <h2 class="signin-signup-title">@ViewData["Title"]</h2>
+        <p class="signin-signup-desc">Sign in to continue</p>
+        <form id="signinForm">
+          <div class="signin-signup-form">
+            <label>Email</label>
+            <div class="input">
+              <input type="email" placeholder="Enter your email" id="txtusername" required />
+            </div>
+            <label>Password</label>
+            <div class="input icon">
+              <input type="password" placeholder="Enter your password" id="txtuserpassword" required />
+              <span class="input-icon readPass">
+                <img src="../assets/images/eye-line.svg" height="18" alt="">
+              </span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center remamber-text">
+              <label>
+                <input type="checkbox" id="rememberme" /> <span>Remember me</span>
+              </label>
+              <a asp-page="ForgotPassword">Forgot Password?</a>
+            </div>
+            <span id="message"></span>
+            <input type="submit" class="button button-primary w-100" id="btn_sub" value="Sign in" />
+            <div class="contine-text">or continue with</div>
+            <div class="social-login">
+              <a asp-page-handler="GoogleLogin">
+                <img src="../assets/images/google-icon.svg" alt="" />
+                <span>Google</span>
+              </a>
+              <a href="#">
+                <img src="../assets/images/apple-icon.svg" alt="" />
+                <span>Apple</span>
+              </a>
+            </div>
+            <p class="account-text">Don’t have an account ? <a asp-page="SignUp">Sign up</a></p>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="signin-signup-col2"></div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade otp-modal" id="otpModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <a href="" class="close-otp-modal" data-bs-dismiss="modal" aria-label="Close"></a>
+        <div class="modal-body">
+          <h3 class="otp-modal-title">Account Verification</h3>
+          <p class="otp-modal-desc">The verification code has been sent to <span id="otpphone">+966********</span></p>
+
+          <h5 class="otp-modal-subtitle">Please enter your security code</h5>
+          <form id="otpmodalform">
+            <div class="otp-input" id="otpInput">
+              <div class="input">
+                <input class="input_field_custom otp" id="txt_otp-1" type="number" placeholder="0" required maxlength="1" />
+              </div>
+              <div class="input">
+                <input class="input_field_custom otp" id="txt_otp-2" type="number" placeholder="0" required maxlength="1" />
+              </div>
+              <div class="input">
+                <input class="input_field_custom otp" id="txt_otp-3" type="number" placeholder="0" required maxlength="1" />
+              </div>
+              <div class="input">
+                <input class="input_field_custom otp" id="txt_otp-4" type="number" placeholder="0" required maxlength="1" />
+              </div>
+              <div class="input">
+                <input class="input_field_custom otp"  id="txt_otp-5" type="number" placeholder="0" required maxlength="1" />
+              </div>
+              <div class="input">
+                <input class="input_field_custom otp" id="txt_otp-6" type="number" placeholder="0" required maxlength="1" />
+              </div>
+            </div>
+            <input type="submit" class="button button-primary w-100" id="btnsubotp" value="Verify and Continue" />
+          </form>
+          <div class="didnotreceive-text">
+            <span>Didn’t receive it?</span>
+            <p>Send OTP to <a href="">Email</a> OR <a href="">Mobile</a></p>
+          </div>
+          <div class="opt-error-text"><span>Alert</span>: Your sign up was failed please try again</div>
+        </div>
+      </div>
+    </div>
+  </div>
+    <script type="text/javascript">
+
+  let in1 = document.querySelector('#txt_otp-1'),
+      ins = document.querySelectorAll('input[type="number"].otp'),
+      splitNumber = function (e) {
+        let data = e.data || e.target.value;
+        if (!data) return;
+        if (data.length === 1) return;
+
+        popuNext(e.target, data);
+      },
+      popuNext = function (el, data) {
+        el.value = data[0];
+        data = data.substring(1);
+        if (el.parentElement.nextElementSibling.querySelector('input') && data.length) {
+          popuNext(el.parentElement.nextElementSibling.querySelector('input'), data);
+        }
+      };
+
+    ins.forEach(function (input) {
+      input.addEventListener('keyup', function (e) {
+        if (e.keyCode === 16 || e.keyCode == 9 || e.keyCode == 224 || e.keyCode == 18 || e.keyCode == 17) {
+          return;
+        }
+        if ((e.keyCode === 8 || e.keyCode === 37) && this.parentElement.previousElementSibling !== null) {
+          this.parentElement.previousElementSibling.querySelector('input').select();
+        } else if (e.keyCode !== 8 && this.parentElement.nextElementSibling !== null) {
+          this.parentElement.nextElementSibling.querySelector('input').select();
+        }
+
+        if (e.target.value.length > 1) {
+          splitNumber(e);
+        }
+      });
+
+      input.addEventListener('focus', function (e) {
+        if (this === in1) return;
+
+        if (in1.value == '') {
+          in1.focus();
+        }
+
+        if (this.parentElement.previousElementSibling.querySelector('input').value == '') {
+          this.parentElement.previousElementSibling.querySelector('input').focus();
+        }
+      });
+    });
+
+    in1.addEventListener('input', splitNumber);
+
+</script>
+      
